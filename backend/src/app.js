@@ -26,6 +26,7 @@ app.use('/api/profile', profileRoutes);
 
 const PORT = process.env.PORT || 3001;
 if (require.main === module) {
+  require('./cron');
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 

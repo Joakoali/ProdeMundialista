@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
+import HomePage from './pages/HomePage';
 import Layout from './components/Layout';
 
 function PrivateRoute({ children }) {
@@ -19,7 +20,7 @@ export default function App() {
             </PrivateRoute>
           }
         >
-          <Route index element={<div className="text-secondary text-sm">Cargando...</div>} />
+          <Route index element={<HomePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

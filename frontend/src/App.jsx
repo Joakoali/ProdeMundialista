@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import PredictionPage from './pages/PredictionPage';
+import LeaderboardPage from './pages/LeaderboardPage';
+import ProfilePage from './pages/ProfilePage';
 import Layout from './components/Layout';
 
 function PrivateRoute({ children }) {
@@ -23,6 +25,8 @@ export default function App() {
         >
           <Route index element={<HomePage />} />
           <Route path="match/:id" element={<PredictionPage />} />
+          <Route path="leaderboard" element={<LeaderboardPage />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

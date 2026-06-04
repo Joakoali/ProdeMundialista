@@ -39,6 +39,9 @@ router.post('/register', async (req, res) => {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.status(201).json({ token, user });
   } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ message: 'Username already taken' });
+    }
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }

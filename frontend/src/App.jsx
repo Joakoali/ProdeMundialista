@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
+import PredictionPage from './pages/PredictionPage';
 import Layout from './components/Layout';
 
 function PrivateRoute({ children }) {
@@ -21,6 +22,7 @@ export default function App() {
           }
         >
           <Route index element={<HomePage />} />
+          <Route path="match/:id" element={<PredictionPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

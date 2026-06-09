@@ -26,6 +26,9 @@ async function syncMatches() {
 }
 
 async function upsertMatch(apiMatch) {
+  // Skip knockout matches where teams haven't been determined yet
+  if (!apiMatch.homeTeam.name && !apiMatch.homeTeam.shortName) return;
+
   const status = STATUS_MAP[apiMatch.status] || 'scheduled';
   const externalId = String(apiMatch.id);
 
@@ -36,8 +39,8 @@ async function upsertMatch(apiMatch) {
 
   if (existing.rows.length === 0) {
     await db.query(
-      `INSERT INTO matches (external_id, home_team, away_team, kickoff_at, status, stage)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO matches (external_id, home_team, away_team, kickoff_at, status, stage, home_team_id, away_team_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         externalId,
         apiMatch.homeTeam.shortName || apiMatch.homeTeam.name,
@@ -45,6 +48,8 @@ async function upsertMatch(apiMatch) {
         apiMatch.utcDate,
         status,
         apiMatch.stage || 'GROUP_STAGE',
+        String(apiMatch.homeTeam.id),
+        String(apiMatch.awayTeam.id),
       ]
     );
     return;

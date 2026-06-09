@@ -3,12 +3,14 @@ import { api } from '../lib/api';
 import MatchCard from '../components/MatchCard';
 
 const STAGES = [
-  { key: 'ALL', label: 'Todos' },
-  { key: 'GROUP_STAGE', label: 'Grupos' },
-  { key: 'ROUND_OF_16', label: 'Octavos' },
+  { key: 'ALL',            label: 'Todos' },
+  { key: 'GROUP_STAGE',    label: 'Grupos' },
+  { key: 'LAST_32',        label: '16avos' },
+  { key: 'LAST_16',        label: 'Octavos' },
   { key: 'QUARTER_FINALS', label: 'Cuartos' },
-  { key: 'SEMI_FINALS', label: 'Semis' },
-  { key: 'FINAL', label: 'Final' },
+  { key: 'SEMI_FINALS',    label: 'Semis' },
+  { key: 'THIRD_PLACE',    label: '3er puesto' },
+  { key: 'FINAL',          label: 'Final' },
 ];
 
 export default function HomePage() {

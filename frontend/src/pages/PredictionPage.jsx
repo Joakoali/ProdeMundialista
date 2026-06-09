@@ -11,6 +11,7 @@ export default function PredictionPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [matchData, setMatchData] = useState(null);
+  const [squads, setSquads] = useState(null);
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
   const [scorers, setScorers] = useState([]);
@@ -19,12 +20,16 @@ export default function PredictionPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    api.get(`/matches/${id}`).then((data) => {
-      setMatchData(data);
-      if (data.prediction) {
-        setHomeScore(data.prediction.predicted_home);
-        setAwayScore(data.prediction.predicted_away);
-        setScorers(data.prediction.predicted_scorers || []);
+    Promise.all([
+      api.get(`/matches/${id}`),
+      api.get(`/matches/${id}/squads`),
+    ]).then(([matchRes, squadsRes]) => {
+      setMatchData(matchRes);
+      setSquads(squadsRes);
+      if (matchRes.prediction) {
+        setHomeScore(matchRes.prediction.predicted_home);
+        setAwayScore(matchRes.prediction.predicted_away);
+        setScorers(matchRes.prediction.predicted_scorers || []);
       }
     });
   }, [id]);
@@ -111,6 +116,8 @@ export default function PredictionPage() {
           selectedScorers={scorers}
           onChange={setScorers}
           disabled={isLocked}
+          homeSquad={squads?.home}
+          awaySquad={squads?.away}
         />
       </div>
 

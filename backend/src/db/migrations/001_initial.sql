@@ -40,3 +40,6 @@ CREATE INDEX IF NOT EXISTS idx_predictions_user_id ON predictions(user_id);
 CREATE INDEX IF NOT EXISTS idx_predictions_match_id ON predictions(match_id);
 CREATE INDEX IF NOT EXISTS idx_matches_kickoff ON matches(kickoff_at);
 CREATE INDEX IF NOT EXISTS idx_matches_status ON matches(status);
+
+ALTER TABLE matches ADD COLUMN IF NOT EXISTS home_team_id VARCHAR(50);
+ALTER TABLE matches ADD COLUMN IF NOT EXISTS away_team_id VARCHAR(50);

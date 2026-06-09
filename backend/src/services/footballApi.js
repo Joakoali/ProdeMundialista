@@ -6,6 +6,10 @@ const client = axios.create({
   timeout: 10000,
 });
 
+// Cache squad data per team to avoid hitting rate limits (24h TTL)
+const squadCache = new Map();
+const SQUAD_CACHE_TTL = 24 * 60 * 60 * 1000;
+
 async function fetchWorldCupMatches() {
   const res = await client.get('/competitions/WC/matches');
   return res.data.matches;
@@ -16,4 +20,15 @@ async function fetchMatchDetail(externalId) {
   return res.data;
 }
 
-module.exports = { fetchWorldCupMatches, fetchMatchDetail };
+async function fetchTeamSquad(teamId) {
+  const cached = squadCache.get(teamId);
+  if (cached && Date.now() - cached.fetchedAt < SQUAD_CACHE_TTL) {
+    return cached.players;
+  }
+  const res = await client.get(`/teams/${teamId}`);
+  const players = (res.data.squad || []).map(p => p.name);
+  squadCache.set(teamId, { players, fetchedAt: Date.now() });
+  return players;
+}
+
+module.exports = { fetchWorldCupMatches, fetchMatchDetail, fetchTeamSquad };

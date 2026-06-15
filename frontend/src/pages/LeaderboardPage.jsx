@@ -50,15 +50,16 @@ export default function LeaderboardPage() {
       <div>
         {entries.map((entry) => {
           const isMe = entry.id === currentUser.id;
+          const isLeader = entry.rank === 1;
           return (
             <div
               key={entry.id}
               className={`flex items-center justify-between py-3 border-b border-elevated ${
                 isMe ? 'opacity-30' : ''
-              }`}
+              } ${isLeader ? 'bg-yellow/5' : ''}`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-secondary text-xs w-6 text-right">
+                <span className={`text-xs w-6 text-right ${isLeader ? 'text-yellow' : 'text-secondary'}`}>
                   #{entry.rank}
                 </span>
                 <div
@@ -66,6 +67,7 @@ export default function LeaderboardPage() {
                   style={{ backgroundColor: entry.avatar_color }}
                 />
                 <span className="text-sm">{entry.username}</span>
+                {isLeader && <span className="text-base leading-none">👑</span>}
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-secondary text-xs">

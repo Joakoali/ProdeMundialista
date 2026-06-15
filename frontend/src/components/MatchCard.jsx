@@ -9,16 +9,20 @@ export default function MatchCard({ match }) {
     match.predicted_home !== null && match.predicted_home !== undefined;
   const isLocked = match.status !== 'scheduled';
   const isDimmed = match.status === 'finished';
+  const isPending = match.status === 'scheduled' && !isPredicted;
 
   return (
     <motion.div
       whileHover={!isLocked ? { backgroundColor: '#1A1A1A' } : {}}
       onClick={() => navigate(`/match/${match.id}`)}
-      className={`border-b border-elevated py-4 cursor-pointer transition-colors ${
+      className={`relative border-b border-elevated py-4 cursor-pointer transition-colors ${
         isDimmed ? 'opacity-50' : ''
       }`}
     >
-      <div className="flex items-center justify-between">
+      {isPending && (
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-green" />
+      )}
+      <div className={`flex items-center justify-between ${isPending ? 'pl-3' : ''}`}>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-bold text-sm truncate">{match.home_team}</span>

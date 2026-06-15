@@ -8,13 +8,14 @@ export default function MatchCard({ match }) {
   const isPredicted =
     match.predicted_home !== null && match.predicted_home !== undefined;
   const isLocked = match.status !== 'scheduled';
+  const isDimmed = match.status === 'finished';
 
   return (
     <motion.div
       whileHover={!isLocked ? { backgroundColor: '#1A1A1A' } : {}}
       onClick={() => navigate(`/match/${match.id}`)}
       className={`border-b border-elevated py-4 cursor-pointer transition-colors ${
-        isLocked ? 'opacity-50' : ''
+        isDimmed ? 'opacity-50' : ''
       }`}
     >
       <div className="flex items-center justify-between">

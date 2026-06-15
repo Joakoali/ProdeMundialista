@@ -5,16 +5,26 @@ import { formatDate } from '../lib/utils';
 export default function ProfilePage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    api.get('/profile').then((d) => {
-      setData(d);
-      setLoading(false);
-    });
+    api.get('/profile')
+      .then((d) => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || 'Error al cargar el perfil');
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
     return <div className="text-secondary text-sm">Cargando...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red text-sm">{error}</div>;
   }
 
   const { user, predictions, stats } = data;

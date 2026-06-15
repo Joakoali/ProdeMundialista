@@ -23,19 +23,27 @@ export default function PredictionPage() {
     Promise.all([
       api.get(`/matches/${id}`),
       api.get(`/matches/${id}/squads`),
-    ]).then(([matchRes, squadsRes]) => {
-      setMatchData(matchRes);
-      setSquads(squadsRes);
-      if (matchRes.prediction) {
-        setHomeScore(matchRes.prediction.predicted_home);
-        setAwayScore(matchRes.prediction.predicted_away);
-        setScorers(matchRes.prediction.predicted_scorers || []);
-      }
-    });
+    ])
+      .then(([matchRes, squadsRes]) => {
+        setMatchData(matchRes);
+        setSquads(squadsRes);
+        if (matchRes.prediction) {
+          setHomeScore(matchRes.prediction.predicted_home);
+          setAwayScore(matchRes.prediction.predicted_away);
+          setScorers(matchRes.prediction.predicted_scorers || []);
+        }
+      })
+      .catch((err) => {
+        setError(err.message || 'Error al cargar el partido');
+      });
   }, [id]);
 
-  if (!matchData) {
+  if (!matchData && !error) {
     return <div className="text-secondary text-sm">Cargando...</div>;
+  }
+
+  if (error && !matchData) {
+    return <div className="text-red text-sm">{error}</div>;
   }
 
   const isLocked = matchData.status !== 'scheduled';

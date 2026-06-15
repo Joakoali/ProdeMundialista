@@ -110,6 +110,8 @@ async function upsertMatch(apiMatch) {
     return;
   }
 
+  if (match.status === 'finished') return;
+
   await db.query(
     'UPDATE matches SET status = $1, updated_at = NOW() WHERE id = $2',
     [status, match.id]

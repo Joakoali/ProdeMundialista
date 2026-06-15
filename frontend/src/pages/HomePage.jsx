@@ -17,19 +17,36 @@ export default function HomePage() {
   const [matches, setMatches] = useState([]);
   const [stage, setStage] = useState('ALL');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    api.get('/matches').then((data) => {
-      setMatches(data);
-      setLoading(false);
-    });
+    api.get('/matches')
+      .then((data) => {
+        setMatches(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || 'Error al cargar los partidos');
+        setLoading(false);
+      });
   }, []);
 
   const filtered =
     stage === 'ALL' ? matches : matches.filter((m) => m.stage === stage);
 
+  const sorted = [...filtered].sort((a, b) => {
+    const aNeedsPred = a.status === 'scheduled' && a.predicted_home == null;
+    const bNeedsPred = b.status === 'scheduled' && b.predicted_home == null;
+    if (aNeedsPred !== bNeedsPred) return aNeedsPred ? -1 : 1;
+    return new Date(a.kickoff_at) - new Date(b.kickoff_at);
+  });
+
   if (loading) {
     return <div className="text-secondary text-sm">Cargando partidos...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red text-sm">{error}</div>;
   }
 
   return (
@@ -58,7 +75,7 @@ export default function HomePage() {
         </p>
       ) : (
         <div>
-          {filtered.map((match) => (
+          {sorted.map((match) => (
             <MatchCard key={match.id} match={match} />
           ))}
         </div>

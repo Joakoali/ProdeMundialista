@@ -6,6 +6,7 @@ import ScorePicker from '../components/ScorePicker';
 import GoalscorerPicker from '../components/GoalscorerPicker';
 import Badge from '../components/ui/Badge';
 import { formatDate } from '../lib/utils';
+import { goalscorerBadge } from '../lib/scorers';
 
 export default function PredictionPage() {
   const { id } = useParams();
@@ -47,6 +48,15 @@ export default function PredictionPage() {
   }
 
   const isLocked = matchData.status !== 'scheduled';
+  const isFinished = matchData.status === 'finished';
+
+  const scorerBadge = isFinished
+    ? goalscorerBadge(
+        matchData.prediction?.predicted_scorers,
+        matchData.home_scorers,
+        matchData.away_scorers
+      )
+    : null;
 
   const handleSave = async () => {
     setSaving(true);
@@ -91,19 +101,31 @@ export default function PredictionPage() {
       {isLocked && matchData.status === 'live' && (
         <p className="text-yellow text-xs mt-4">Partido en juego — predicción cerrada.</p>
       )}
-      {isLocked && matchData.status === 'finished' && (
-        <p className="text-secondary text-xs mt-4">
-          Resultado final:{' '}
-          <span className="text-primary font-bold">
-            {matchData.home_score}–{matchData.away_score}
-          </span>
-          {matchData.prediction?.points_earned !== null &&
-            matchData.prediction?.points_earned !== undefined && (
-              <span className="text-green font-bold ml-2">
-                +{matchData.prediction.points_earned} pts
-              </span>
-            )}
-        </p>
+
+      {isFinished && (
+        <div className="text-center mt-6 mb-4">
+          <p className="text-secondary text-xs mb-1">Resultado final</p>
+          <p className="text-green text-3xl font-bold tabular-nums">
+            {matchData.home_score} – {matchData.away_score}
+          </p>
+          {matchData.prediction && (
+            <p className="text-secondary text-xs mt-2">
+              Tu predicción: {matchData.prediction.predicted_home}–{matchData.prediction.predicted_away}
+            </p>
+          )}
+          {(scorerBadge || matchData.prediction?.points_earned != null) && (
+            <p className="text-green text-xs mt-1">
+              {[
+                scorerBadge,
+                matchData.prediction?.points_earned != null
+                  ? `+${matchData.prediction.points_earned} pts`
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </p>
+          )}
+        </div>
       )}
 
       <div className={isLocked ? 'opacity-50 pointer-events-none' : ''}>

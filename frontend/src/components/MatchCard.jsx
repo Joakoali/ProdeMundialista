@@ -2,14 +2,20 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Badge from './ui/Badge';
 import { formatDate } from '../lib/utils';
+import { goalscorerBadge } from '../lib/scorers';
 
 export default function MatchCard({ match }) {
   const navigate = useNavigate();
-  const isPredicted =
-    match.predicted_home !== null && match.predicted_home !== undefined;
+  const isPredicted = match.predicted_home !== null && match.predicted_home !== undefined;
   const isLocked = match.status !== 'scheduled';
   const isDimmed = match.status === 'finished';
   const isPending = match.status === 'scheduled' && !isPredicted;
+  const isFinished = match.status === 'finished';
+
+  const scorerBadge =
+    isFinished && isPredicted
+      ? goalscorerBadge(match.predicted_scorers, match.home_scorers, match.away_scorers)
+      : null;
 
   return (
     <motion.div
@@ -32,18 +38,28 @@ export default function MatchCard({ match }) {
           <span className="text-secondary text-xs">{formatDate(match.kickoff_at)}</span>
         </div>
 
-        <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-          {isPredicted && (
-            <span className="text-secondary text-xs tabular-nums">
-              {match.predicted_home}–{match.predicted_away}
-            </span>
+        <div className="flex flex-col items-end gap-0.5 flex-shrink-0 ml-4">
+          <div className="flex items-center gap-2">
+            {isPredicted && (
+              <span className="text-secondary text-xs tabular-nums">
+                {match.predicted_home}–{match.predicted_away}
+              </span>
+            )}
+            {isFinished && match.home_score != null && (
+              <span className="text-green font-bold text-sm tabular-nums">
+                {match.home_score}–{match.away_score}
+              </span>
+            )}
+            {isFinished && match.points_earned != null && (
+              <span className="text-green text-xs font-bold">
+                +{match.points_earned}
+              </span>
+            )}
+            <Badge status={match.status} />
+          </div>
+          {scorerBadge && (
+            <span className="text-green text-xs">{scorerBadge}</span>
           )}
-          {match.status === 'finished' && match.points_earned !== null && (
-            <span className="text-green text-sm font-bold tabular-nums">
-              +{match.points_earned}
-            </span>
-          )}
-          <Badge status={match.status} />
         </div>
       </div>
     </motion.div>

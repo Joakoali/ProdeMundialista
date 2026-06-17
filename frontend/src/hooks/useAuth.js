@@ -37,5 +37,19 @@ export function useAuth() {
     }
   }
 
-  return { login, register, loading, error };
+  async function resetPassword(username, newPassword) {
+    setLoading(true);
+    setError(null);
+    try {
+      await api.post('/auth/reset-password', { username, newPassword });
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { login, register, resetPassword, loading, error };
 }

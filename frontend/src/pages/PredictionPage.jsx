@@ -69,7 +69,7 @@ export default function PredictionPage() {
         predicted_scorers: scorers,
       });
       setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
+      setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       setError(err.message);
     } finally {

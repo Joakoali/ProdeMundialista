@@ -7,7 +7,7 @@ function countOccurrences(arr) {
   }, {});
 }
 
-function TeamSection({ teamName, players, scorerCounts, onAdd, onRemove, disabled }) {
+function TeamSection({ teamName, players, scorerCounts, onAdd, onRemove, disabled, atCap }) {
   return (
     <div>
       <p className="text-secondary text-xs uppercase tracking-wider mb-3">{teamName}</p>
@@ -22,9 +22,9 @@ function TeamSection({ teamName, players, scorerCounts, onAdd, onRemove, disable
               <motion.button
                 key={player}
                 type="button"
-                disabled={disabled}
+                disabled={disabled || (atCap && (scorerCounts[player] || 0) === 0)}
                 onClick={() => !disabled && onAdd(player)}
-                whileTap={disabled ? undefined : { scale: 0.93 }}
+                whileTap={(disabled || (atCap && (scorerCounts[player] || 0) === 0)) ? undefined : { scale: 0.93 }}
                 className={`flex items-center gap-1.5 text-xs px-3 py-1.5 border transition-colors disabled:opacity-40 disabled:cursor-default ${
                   selected
                     ? 'border-green text-green'
@@ -63,10 +63,14 @@ function TeamSection({ teamName, players, scorerCounts, onAdd, onRemove, disable
   );
 }
 
-export default function GoalscorerPicker({ selectedScorers, onChange, disabled, homeSquad, awaySquad }) {
+export default function GoalscorerPicker({ selectedScorers, onChange, disabled, homeSquad, awaySquad, maxScorers = Infinity }) {
   const scorerCounts = countOccurrences(selectedScorers);
+  const atCap = selectedScorers.length >= maxScorers;
 
-  const addScorer = (name) => onChange([...selectedScorers, name]);
+  const addScorer = (name) => {
+    if (selectedScorers.length >= maxScorers) return;
+    onChange([...selectedScorers, name]);
+  };
 
   const removeOne = (name) => {
     const idx = selectedScorers.lastIndexOf(name);
@@ -80,7 +84,10 @@ export default function GoalscorerPicker({ selectedScorers, onChange, disabled, 
   return (
     <div className="mt-8 space-y-6">
       <p className="text-secondary text-xs uppercase tracking-wider">
-        Goleadores <span className="normal-case">(opcional)</span>
+        Goleadores{' '}
+        <span className="normal-case">
+          ({selectedScorers.length}/{maxScorers === Infinity ? '∞' : maxScorers})
+        </span>
       </p>
 
       <TeamSection
@@ -90,6 +97,7 @@ export default function GoalscorerPicker({ selectedScorers, onChange, disabled, 
         onAdd={addScorer}
         onRemove={removeOne}
         disabled={disabled}
+        atCap={atCap}
       />
 
       <TeamSection
@@ -99,6 +107,7 @@ export default function GoalscorerPicker({ selectedScorers, onChange, disabled, 
         onAdd={addScorer}
         onRemove={removeOne}
         disabled={disabled}
+        atCap={atCap}
       />
 
       {selectedScorers.length === 0 && disabled && (

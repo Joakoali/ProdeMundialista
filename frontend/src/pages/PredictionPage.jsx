@@ -41,6 +41,13 @@ export default function PredictionPage() {
   }, [id]);
 
   useEffect(() => {
+    const totalGoals = homeScore + awayScore;
+    if (scorers.length > totalGoals) {
+      setScorers((prev) => prev.slice(0, totalGoals));
+    }
+  }, [homeScore, awayScore]);
+
+  useEffect(() => {
     return () => {
       if (redirectTimerRef.current) clearTimeout(redirectTimerRef.current);
     };
@@ -155,6 +162,7 @@ export default function PredictionPage() {
           disabled={isLocked}
           homeSquad={squads?.home}
           awaySquad={squads?.away}
+          maxScorers={homeScore + awayScore}
         />
       </div>
 

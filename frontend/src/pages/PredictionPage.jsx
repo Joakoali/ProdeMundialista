@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { api } from '../lib/api';
@@ -18,6 +18,7 @@ export default function PredictionPage() {
   const [scorers, setScorers] = useState([]);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const redirectTimerRef = useRef(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -38,6 +39,12 @@ export default function PredictionPage() {
         setError(err.message || 'Error al cargar el partido');
       });
   }, [id]);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimerRef.current) clearTimeout(redirectTimerRef.current);
+    };
+  }, []);
 
   if (!matchData && !error) {
     return <div className="text-secondary text-sm">Cargando...</div>;
@@ -69,7 +76,7 @@ export default function PredictionPage() {
         predicted_scorers: scorers,
       });
       setSaved(true);
-      setTimeout(() => navigate('/'), 1500);
+      redirectTimerRef.current = setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       setError(err.message);
     } finally {

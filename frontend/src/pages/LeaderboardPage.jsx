@@ -14,11 +14,13 @@ export default function LeaderboardPage() {
     const fetches = [api.get('/leaderboard')];
     if (isPersonalUser) fetches.push(api.get('/leaderboard/personal'));
 
-    Promise.all(fetches).then(([main, personal]) => {
-      setEntries(main);
-      if (personal) setPersonalEntries(personal);
-      setLoading(false);
-    });
+    Promise.all(fetches)
+      .then(([main, personal]) => {
+        setEntries(main);
+        if (personal) setPersonalEntries(personal);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [isPersonalUser]);
 
   if (loading) {

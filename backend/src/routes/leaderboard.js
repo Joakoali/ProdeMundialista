@@ -41,7 +41,7 @@ router.get('/personal', authMiddleware, async (req, res) => {
          u.username,
          u.avatar_color,
          COALESCE(SUM(p.points_earned), 0)::int AS total_points,
-         COUNT(p.id)::int AS matches_predicted,
+         (SELECT COUNT(*)::int FROM matches WHERE kickoff_at >= $1) AS matches_predicted,
          RANK() OVER (ORDER BY COALESCE(SUM(p.points_earned), 0) DESC) AS rank
        FROM users u
        LEFT JOIN predictions p

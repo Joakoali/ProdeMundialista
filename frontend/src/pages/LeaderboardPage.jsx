@@ -36,7 +36,7 @@ export default function LeaderboardPage() {
       {isPersonalUser && personalEntries && (
         <div className="mb-8">
           <p className="text-secondary text-xs uppercase tracking-wider mb-3">
-            Ranking chico · desde 24 jun
+            Ranking chico · desde 25 jun
           </p>
           <div className="space-y-0">
             {personalEntries.map((entry) => {
